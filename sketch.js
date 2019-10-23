@@ -8,6 +8,7 @@ let time = 0;   //time of the fourier series (fourier epicycles)
 let path = [];  //path drawn by the fourier epicycles
 
 let drawXAndYEpicycles = false; //if true, the epicycles of the x and y components of the final path will be drawn separately
+let epicyclesColor = 60;            //color used to draw epicycles
 
 
 function setup() {
@@ -37,10 +38,6 @@ function setup() {
         epicyclesXCenter = width / 2;
         epicyclesYCenter = height / 2;
     }
-
-    //set drawing colors (note: color() function does not work outside setup() and draw())
-    epicyclesColor = 60;
-    pathColor = color(255, 0, 0);
     
     initSketchPoints(); //initialize the points to draw
 
@@ -81,10 +78,11 @@ function draw() {
     }
 
     //draw final path points
+    let vertexColor = 0; //drawing color for a vertex
     for (let i = 0; i < path.length; i++) {
         //set color of current vertex using the rainbow colors
-        let c = rainbowColor(i * 255 / (fourierY.length - 1)); //total vertices to be drawn is equal to fourierY.length. map (0, fourierY.length - 1) => (0, 255)
-        stroke(c.r, c.g, c.b);
+        vertexColor = rainbowColor(i * 255 / (fourierY.length - 1)); //total vertices to be drawn is equal to fourierY.length. map (0, fourierY.length - 1) => (0, 255)
+        stroke(vertexColor.r, vertexColor.g, vertexColor.b);
 
         //draw vertex
         if (i > 0) {
