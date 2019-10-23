@@ -56,7 +56,7 @@ function setup() {
 }
 
 function draw() {
-    background(220);
+    background(180);
     noFill(); //do not fill shapes
 
     if (drawXAndYEpicycles) {
@@ -81,13 +81,20 @@ function draw() {
     }
 
     //draw final path points
-    stroke(pathColor, 0, 0);
     strokeWeight(2);
-    beginShape(); //connect the coming vertices by lines
     for (let i = 0; i < path.length; i++) {
-        vertex(path[i].x, path[i].y);
+        //set color of current vertex using the rainbow colors
+        let c = rainbowColor(i * 255 / (fourierY.length - 1)); //total vertices to be drawn is equal to fourierY.length. map (0, fourierY.length - 1) => (0, 255)
+        stroke(c.r, c.g, c.b);
+
+        //draw vertex
+        if (i > 0) {
+            line(path[i - 1].x, path[i - 1].y, path[i].x, path[i].y)
+        } 
+        else{
+            point(path[i].x, path[i].y);
+        }
     }
-    endShape();
     strokeWeight(1)
 
     //increate time by dt
@@ -198,4 +205,14 @@ function epicyclesSum(x, y, fourierX, fourierY) {
 
     //return a vector representing the epicycles total sum at current time
     return createVector(x, y);
+}
+
+function rainbowColor(color) {
+    //return the RGB color for an intermediate color between XXX and YYY where color is in the range of 0:255
+
+    var r = Math.round(Math.sin(0.024 * color + 0) * 127 + 128);
+    var g = Math.round(Math.sin(0.024 * color + 2) * 127 + 128);
+    var b = Math.round(Math.sin(0.024 * color + 4) * 127 + 128);
+
+    return {r: r, g: g, b: b}
 }
