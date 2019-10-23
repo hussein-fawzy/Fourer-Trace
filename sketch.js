@@ -9,6 +9,7 @@ let path = [];  //path drawn by the fourier epicycles
 
 let drawXAndYEpicycles = false; //if true, the epicycles of the x and y components of the final path will be drawn separately
 
+
 function setup() {
     frameRate(40);
 
@@ -36,6 +37,10 @@ function setup() {
         epicyclesXCenter = width / 2;
         epicyclesYCenter = height / 2;
     }
+
+    //set drawing colors (note: color() function does not work outside setup() and draw())
+    epicyclesColor = 60;
+    pathColor = color(255, 0, 0);
     
     initSketchPoints(); //initialize the points to draw
 
@@ -51,7 +56,7 @@ function setup() {
 }
 
 function draw() {
-    background(80);
+    background(220);
     noFill(); //do not fill shapes
 
     if (drawXAndYEpicycles) {
@@ -60,7 +65,7 @@ function draw() {
         let vy = epicycles(yEpicyclesXCenter, yEpicyclesYCenter, HALF_PI, fourierY); //rotate the components of the epicycles of the y transform by 90 degrees
 
         //draw lines from each epicycle end point to final path
-        stroke(255, 100);
+        stroke(epicyclesColor, 100);
         line(vx.x, vx.y, vx.x, vy.y);
         line(vy.x, vy.y, vx.x, vy.y);
 
@@ -76,7 +81,7 @@ function draw() {
     }
 
     //draw final path points
-    stroke(255, 0, 0);
+    stroke(pathColor, 0, 0);
     strokeWeight(2);
     beginShape(); //connect the coming vertices by lines
     for (let i = 0; i < path.length; i++) {
@@ -97,6 +102,7 @@ function draw() {
         path = [];
     }
 }
+
 
 function initSketchPoints() {
     //init points of path to be drawn
@@ -135,11 +141,11 @@ function epicycles(x, y, rotation, fourier) {
         y += radius * sin(freq * time + phase + rotation);  //current y component of the sum of all epicycles
 
         //draw a slightly transparent circle to represent the current epicycle
-        stroke(255, 100);
+        stroke(epicyclesColor, 100);
         ellipse(prevX, prevY, radius * 2);
 
         //draw a line from the epicycle center on the canvas to the current epicycles total sum
-        stroke(255);
+        stroke(epicyclesColor);
         line(prevX, prevY, x, y);
     }
 
@@ -182,11 +188,11 @@ function epicyclesSum(x, y, fourierX, fourierY) {
         y += radius * sin(freq * time + phase + HALF_PI);
 
         //draw a slightly transparent circle to represent the current epicycle
-        stroke(255, 100);
+        stroke(epicyclesColor, 100);
         ellipse(prevX, prevY, radius * 2);
 
         //draw a line from the epicycle center on the canvas to the current epicycles total sum
-        stroke(255);
+        stroke(epicyclesColor);
         line(prevX, prevY, x, y);
     }
 
