@@ -84,7 +84,7 @@ function epicycles(x, y, rotation, fourier) {
 }
 
 function draw() {
-    background(0);
+    background(80);
     noFill(); //do not fill shapes
 
     //calculate the vector representing the sum of epicycles for each fourier transform at the current time
