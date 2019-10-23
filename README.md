@@ -1,0 +1,2 @@
+A mathematical model that can trace a set of points using epicycles using the discrete fourier transform.
+This code was created using the p5.js javascript library. open index.html with a browser to see the results.
