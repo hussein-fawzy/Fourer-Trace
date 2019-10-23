@@ -56,7 +56,7 @@ function setup() {
 }
 
 function draw() {
-    background(180);
+    background(200);
     noFill(); //do not fill shapes
 
     if (drawXAndYEpicycles) {
@@ -81,7 +81,6 @@ function draw() {
     }
 
     //draw final path points
-    strokeWeight(2);
     for (let i = 0; i < path.length; i++) {
         //set color of current vertex using the rainbow colors
         let c = rainbowColor(i * 255 / (fourierY.length - 1)); //total vertices to be drawn is equal to fourierY.length. map (0, fourierY.length - 1) => (0, 255)
@@ -89,9 +88,11 @@ function draw() {
 
         //draw vertex
         if (i > 0) {
+            strokeWeight(2);
             line(path[i - 1].x, path[i - 1].y, path[i].x, path[i].y)
         } 
         else{
+            strokeWeight(5);
             point(path[i].x, path[i].y);
         }
     }
