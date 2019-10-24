@@ -194,8 +194,10 @@ function epicyclesSum(x, y, fourierX, fourierY) {
         y += radius * sin(freq * time + phase + HALF_PI);
 
         //draw a slightly transparent circle to represent the current epicycle
-        stroke(epicyclesColor, 100);
-        ellipse(prevX, prevY, radius * 2);
+        //circles are not drawn for epicyclesSum as the radius of the resulting epicycle is changing
+        // radius = sqrt((x - prevX) * (x - prevX) + (y - prevY) * (y - prevY))
+        // stroke(epicyclesColor, 100);
+        // ellipse(prevX, prevY, radius * 2);
 
         //draw a line from the epicycle center on the canvas to the current epicycles total sum
         stroke(epicyclesColor);
