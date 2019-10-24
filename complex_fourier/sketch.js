@@ -1,11 +1,12 @@
 //global variables
-let p = [];     //complex points of path to be drawn (x-components: real, y-components: imaginary)
-let fourier;   //DFT of input path points
+let p = [];                 //complex points of path to be drawn (x-components: real, y-components: imaginary)
+let fourier;                //DFT of input path points
 
-let time = 0;   //time of the fourier series (fourier epicycles)
-let path = [];  //path drawn by the fourier epicycles
+let time = 0;               //time of the fourier series (fourier epicycles)
+let timeDirection = 0;      //0: time is increasing (automatically switches to 1), 1: time is decreasing (automatically switches to 0), 2: time is increasing and resets at the end of the cycle
+let path = [];              //path drawn by the fourier epicycles
 
-let epicyclesColor = 60;            //color used to draw epicycles
+let epicyclesColor = 60;    //color used to draw epicycles
 
 
 function setup() {
@@ -40,8 +41,13 @@ function draw() {
     //calculate and raw the epicycles end point of the fourier transform
     let v = epicycles(epicyclesXCenter, epicyclesYCenter, fourier);
 
-    //add the current point to be drawn on the final path
-    path.push(v);
+    //add the current point (or remove a point) to be drawn on the final path
+    if (timeDirection == 0 || timeDirection == 2) {
+        path.push(v);
+    }
+    else {
+        path.pop();
+    }
 
     //draw final path points
     let vertexColor = 0; //drawing color for a vertex
@@ -66,13 +72,32 @@ function draw() {
     //note that a drawn path is completed when the slowest epicycle (frequency = 1) completes a full rotation. and therefore, the total period of the drawn path is TWO_PI
     //divide the period of the drawn path number of frequency components to capture the changes of the fastest epicycle
     const dt = TWO_PI / fourier.length;
-    time += dt;
+    
+    if (timeDirection == 0) {
+        time += dt;
 
-    //reset if the path drawing is complete
-    if (time > TWO_PI) {
-        time = 0;
-        path = [];
+        if (time > TWO_PI) {
+            time = TWO_PI;
+            timeDirection = 1;
+        }
     }
+    else if (timeDirection == 2) {
+        time += dt;
+
+        if (time > TWO_PI) {
+            time = 0;
+            path = []
+        }
+    }
+    else if (timeDirection == 1) {
+        time -= dt;
+
+        if (time < 0) {
+            time = 0;
+            timeDirection = 0;
+        }
+    }
+
 }
 
 
