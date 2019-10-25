@@ -13,8 +13,8 @@ function setup() {
     frameRate(40);
 
     //set plotting area dimensions
-    width = 800;            //canvas width
-    height = 800;           //canavs height
+    width = 800;    //canvas width
+    height = 800;   //canavs height
 
     //create drawing canvas
     createCanvas(width, height);
@@ -38,10 +38,10 @@ function draw() {
     background(200);
     noFill(); //do not fill shapes
 
-    //calculate and raw the epicycles end point of the fourier transform
+    //calculate and draw the epicycles end point of the fourier transform
     let v = epicycles(epicyclesXCenter, epicyclesYCenter, fourier);
 
-    //add the current point (or remove a point) to be drawn on the final path
+    //add the current point to (or remove a point from) the final path to be drawn
     if (timeDirection == 0 || timeDirection == 2) {
         path.push(v);
     }
@@ -68,7 +68,7 @@ function draw() {
     }
     strokeWeight(1)
 
-    //increate time by dt
+    //increate (or decrease) time by dt
     //note that a drawn path is completed when the slowest epicycle (frequency = 1) completes a full rotation. and therefore, the total period of the drawn path is TWO_PI
     //divide the period of the drawn path number of frequency components to capture the changes of the fastest epicycle
     const dt = TWO_PI / fourier.length;
@@ -97,7 +97,6 @@ function draw() {
             timeDirection = 0;
         }
     }
-
 }
 
 
@@ -107,9 +106,9 @@ function initSketchPoints() {
     //any set of points forming a shape when traced can be drawn
 
     //create a set of points from the addition of multiple cosine waves and sine waves
-    for (let i = 0; i < TWO_PI; i += TWO_PI / 200) {
-        let x = 120 * cos(i) + 60 * cos(5 * i) + 20 * cos(25 * i);
-        let y = 120 * sin(i) + 60 * sin(5 * i) + 20 * sin(25 * i);
+    for (let i = 0; i < TWO_PI; i += TWO_PI / 120) {
+        let x = 120 * cos(i) + 60 * cos(5 * i);
+        let y = 120 * sin(i) + 60 * sin(5 * i);
 
         let c = new Complex(x, y);
         p.push(c);

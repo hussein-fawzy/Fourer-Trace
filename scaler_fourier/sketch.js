@@ -1,22 +1,23 @@
 //global variables
-let x = [];     //x points of path to be drawn
-let y = [];     //y points of path to be drawn
-let fourierX;   //DFT of x points
-let fourierY;   //DFT of y points
+let x = [];                 //x points of path to be drawn
+let y = [];                 //y points of path to be drawn
+let fourierX;               //DFT of x points
+let fourierY;               //DFT of y points
 
-let time = 0;   //time of the fourier series (fourier epicycles)
-let path = [];  //path drawn by the fourier epicycles
+let time = 0;               //time of the fourier series (fourier epicycles)
+let timeDirection = 0;      //0: time is increasing (automatically switches to 1), 1: time is decreasing (automatically switches to 0), 2: time is increasing and resets at the end of the cycle
+let path = [];              //path drawn by the fourier epicycles
 
-let drawXAndYEpicycles = false; //if true, the epicycles of the x and y components of the final path will be drawn separately
-let epicyclesColor = 60;            //color used to draw epicycles
+let drawXAndYEpicycles = true;  //if true, the epicycles of the x and y components of the final path will be drawn separately
+let epicyclesColor = 60;        //color used to draw epicycles
 
 
 function setup() {
     frameRate(40);
 
     //set plotting area dimensions
-    width = 800;            //canvas width
-    height = 800;           //canavs height
+    width = 800;    //canvas width
+    height = 800;   //canavs height
 
     //create drawing canvas
     createCanvas(width, height);
@@ -66,15 +67,25 @@ function draw() {
         line(vx.x, vx.y, vx.x, vy.y);
         line(vy.x, vy.y, vx.x, vy.y);
 
-        //add the current point to be drawn on the final path
-        path.push(createVector(vx.x, vy.y));
+        //add the current point to (or remove a point from) the final path to be drawn
+        if (timeDirection == 0 || timeDirection == 2) {
+            path.push(createVector(vx.x, vy.y));
+        }
+        else {
+            path.pop();
+        }
     }
     else {
         //calculate the epicycles end point of the x and y fouriers summed together
         let v = epicyclesSum(epicyclesXCenter, epicyclesYCenter, fourierX, fourierY);
 
-        //add the current point to be drawn on the final path
-        path.push(v);
+        //add the current point to (or remove a point from) the final path to be drawn
+        if (timeDirection == 0 || timeDirection == 2) {
+            path.push(v);
+        }
+        else {
+            path.pop();
+        }
     }
 
     //draw final path points
@@ -96,16 +107,34 @@ function draw() {
     }
     strokeWeight(1)
 
-    //increate time by dt
+    //increate (or decrease) time by dt
     //note that a drawn path is completed when the slowest epicycle (frequency = 1) completes a full rotation. and therefore, the total period of the drawn path is TWO_PI
     //divide the period of the drawn path number of frequency components to capture the changes of the fastest epicycle
-    const dt = TWO_PI / fourierY.length;
-    time += dt;
+    const dt = TWO_PI / fourierX.length;
+    
+    if (timeDirection == 0) {
+        time += dt;
 
-    //reset if the path drawing is complete
-    if (time > TWO_PI) {
-        time = 0;
-        path = [];
+        if (time > TWO_PI) {
+            time = TWO_PI;
+            timeDirection = 1;
+        }
+    }
+    else if (timeDirection == 2) {
+        time += dt;
+
+        if (time > TWO_PI) {
+            time = 0;
+            path = []
+        }
+    }
+    else if (timeDirection == 1) {
+        time -= dt;
+
+        if (time < 0) {
+            time = 0;
+            timeDirection = 0;
+        }
     }
 }
 
@@ -113,13 +142,19 @@ function draw() {
 function initSketchPoints() {
     //init points of path to be drawn
     //initialized points are added to the global x and y arrays
-
     //any set of points forming a shape when traced can be drawn
-    //create a set of points that form a flower when traced (points does not necessarily need to be initialized with cosines and sines, they can also be loaded from another file)
-    for (let i = 0; i < TWO_PI; i += TWO_PI / 100) {
-        x.push(60 * cos(i) + 20 * cos(8 * i));
-        y.push(60 * sin(i) + 20 * sin(8 * i));
+
+    //create a set of points from the addition of multiple cosine waves and sine waves
+    for (let i = 0; i < TWO_PI; i += TWO_PI / 120) {
+        x.push(120 * cos(i) + 60 * cos(5 * i));
+        y.push(120 * sin(i) + 60 * sin(5 * i));
     }
+
+    //create a set of points representing the graph of a compound sine wave
+    // for (let i = 0; i < TWO_PI; i += TWO_PI / 200) {
+    //     x.push((i / TWO_PI * 400) - 200);
+    //     y.push(120 * sin(i) + 60 * sin(5 * i) + 20 * sin(25 * i));
+    // }
 }
 
 function epicycles(x, y, rotation, fourier) {
